@@ -1,0 +1,276 @@
+import asyncio
+import _thread
+import logging
+import subprocess
+import json
+from shlex import quote
+import dict_bytes as db
+import os
+import random
+from sender import tf_serving_cls
+import time, sys
+import numpy as np
+import itertools
+
+# from .model import *
+# from .measurement import *
+# from .placement import Placement
+
+logging.basicConfig(level= logging.DEBUG)
+
+
+controller_message = {"client_id":0,
+    "location_id":0,
+    "model_name":"res18",
+    "acc_limit":0.5,
+    "latency_limit":1000,
+    "real_latency":30,
+    "bw":{"127.0.0.1":330,"127.0.0.2":330},
+    "requests":{
+          0:{
+              "model_ver":0,
+              "data_ver":1,
+              "url":"***********"},
+          1:{
+              "model_ver":0,
+              "data_ver":1,
+              "url":"***********"}
+              }
+}
+
+
+
+
+def get_time():
+    t = time.localtime(time.time())
+    return "%s:%s:%s"%(t.tm_hour,t.tm_min,t.tm_sec)
+
+
+
+class a2_client():
+    def __init__(self, ctrl_addr, ctrl_port, region_id, client_id, model_name, acc_lim, lat_lim, trace_file, comm_interval):
+        # print(MODEL_VERSION,DATA_VERSION)
+        self.dict_tool = db.dict_bytes()
+        self.region_id = region_id
+        self.client_id = client_id
+        self.model_name = model_name
+        self.acc_lim = acc_lim
+        self.lat_lim = lat_lim
+        self.comm_interval = int(comm_interval)
+
+        trace_data = None
+        try:
+            trace_data = list(np.load(trace_file))
+        except:
+            print("Reading trace file Error, using default settings")
+            trace_data = [2] * 3600
+        
+        self.trace_data = trace_data[:1]
+        self.total_requests_number = np.sum(self.trace_data)
+
+
+
+        self.ctrl_addr = ctrl_addr
+        self.ctrl_port = ctrl_port
+        decision_dict = {
+            "mobile_dcp_0":{
+                "url":["http://18.136.13.110:10102/v1/models/mobile_dcp_0:classify"],
+                "model_ver":0,
+                "data_ver":2,
+                "prob": 1.0
+            }
+            
+        }
+        self.config_prob_list = [[decision_dict],[1.0]]
+        self.req_history = {}
+        self.total_req_number = 0
+        self.tf_proxy = tf_serving_cls()
+
+        self.run = asyncio.run (self.main ())
+
+    async def phase_one(self):
+        bandwidths = self.get_bandwidths()
+        # message = {}
+        # message["bandwidth"] = bandwidths
+        # message["history"] = self.req_history
+        message = {}
+        message["bw"] = bandwidths
+        message["client_id"] = self.client_id
+        message["location_id"] = self.region_id
+        message["acc_limit"] = self.acc_lim
+        message["latency_limit"] = self.acc_lim
+        message["model_name"] = self.model_name
+        message["requests"] = {}
+        for i in range(self.total_requests_number):
+            message["requests"][i] = {
+                "model_ver":0,
+                "data_ver":0,
+                "url":""
+            }
+
+        # reader, writer = await asyncio.open_connection(
+        #   self.ctrl_addr, self.ctrl_port)
+
+        # await self.dict_tool.send_dict2bytes (message, writer)
+        # print("Sent Phase one to controller")
+
+        # controller_msg = await self.dict_tool.read_bytes2dict(reader,writer)
+        # self.process_controller_msg(controller_msg)
+        # writer.close()
+        print(self.trace_data)
+        print(message)
+        self.process_controller_msg(1)
+        
+
+    async def client_core(self):
+        await self.phase_one()
+
+        start_time = time.time()
+        trace_iter = itertools.cycle(self.trace_data)
+        count = 0
+        while True: 
+            count += 1
+            num_request = next(trace_iter)
+            print("%s Requests generated at %s"%(num_request,get_time()))
+            reqs = self.request_generator(count,num_request)
+            self.dispatch_requests(reqs)
+
+            # time.sleep(10000)
+            
+            if count == len(self.trace_data):
+                while len(self.req_history.keys()) != self.total_req_number:
+                    # print(len(self.req_history.keys()),self.total_req_number)
+                    pass
+
+                # Communication
+                print("Send to Controller & Wait settings")
+                await self.send_to_controller()
+
+                print("Restart Client")
+                time.sleep(3)
+
+                count = 0
+                self.total_req_number = 0
+                self.req_history = {}
+            else:
+                print("Server sleep %s Secs"%1)
+                time.sleep(1)
+
+
+
+    def config_generator(self):
+        if self.config_prob_list == None:
+            print("Prob None Error")
+            exit(0)
+
+        config_list = self.config_prob_list[0]
+        prob_list = self.config_prob_list[1]
+        if not (0.99999 < sum(prob_list) < 1.00001):
+            raise ValueError("The probabilities are not normalized!")
+        if len(config_list) != len(prob_list):
+            raise ValueError("The length of two input lists are not match!")
+
+        random_normalized_num = random.random()
+        acc_prob = 0.0
+        for item in zip(config_list, prob_list):
+            acc_prob += item[1]
+        if random_normalized_num < acc_prob:
+            return item[0]
+
+
+    def request_generator(self,count,num_request=2):
+        request_list = []
+        for i in range(num_request):
+            self.total_req_number += 1
+            config = self.config_generator()
+            config["time"] = count
+            req_dict = {
+                "id" : self.total_req_number,
+                "config":config
+            }
+
+            # self.req_history[self.total_req_number] = req_dict
+            request_list.append(req_dict)
+
+        return request_list
+
+
+    def dispatch_requests(self,reqs):
+        for item in reqs:
+            _thread.start_new_thread(self.tf_proxy.tf_serving_request,(item,self.req_history))
+
+
+    def get_bandwidths(self):
+        return [12,23,34]
+
+
+    def process_controller_msg(self,ctrl_msg):
+        ctrl_msg = {
+            "mobile_dcp_0":{
+                "url":["http://18.136.13.110:10102/v1/models/mobile_dcp_2:classify"],
+                "model_ver":0,
+                "data_ver":2,
+                "prob": 1.0
+            }
+            
+        }
+        config_list = []
+        prob_list = []
+        for model_version, values in ctrl_msg.items():
+            config = {}
+            config["model_name_version"] = model_version
+            config["model_ver"] = values["model_ver"]
+            config["data_ver"] = values["data_ver"]
+            config["urls"] = values["url"]
+
+            prob_list.append(values["prob"])
+            config_list.append(config)
+        
+        self.config_prob_list = [config_list,prob_list]
+
+
+    async def send_to_controller(self):
+        bandwidths = self.get_bandwidths()
+        # message = {}
+        # message["bandwidth"] = bandwidths
+        # message["history"] = self.req_history
+        message = {}
+        message["bw"] = bandwidths
+        message["client_id"] = self.client_id
+        message["location_id"] = self.region_id
+        message["acc_limit"] = self.acc_lim
+        message["latency_limit"] = self.acc_lim
+        message["requests"] = self.req_history
+        message["model_name"] = self.model_name
+
+        print(message)
+        reader, writer = await asyncio.open_connection(
+          self.ctrl_addr, self.ctrl_port)
+
+        await self.dict_tool.send_dict2bytes (message, writer)
+        print("Sent to controller")
+
+        controller_msg = await self.dict_tool.read_bytes2dict(reader,writer)
+        self.process_controller_msg(controller_msg)
+        writer.close()
+
+
+    async def main(self):
+        self.allocate_done_que = asyncio.Queue ()
+        self.allocat_que = asyncio.Queue()
+        await asyncio.gather(self.client_core())
+
+
+    # def delete_cpu0_docker(self):
+
+if __name__ == "__main__":
+    args = sys.argv
+    region_id = args[1]
+    client_id = args[2]
+    model_name = args[3]
+    acc_limit = args[4]
+    latency_limit = args[5]
+    trace_file = args[6]
+    comm_interval = args[7]
+    print(args)
+    a2_client("192.168.1.104",8888,region_id, client_id, model_name, acc_limit, latency_limit, trace_file, comm_interval)
