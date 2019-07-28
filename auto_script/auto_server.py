@@ -159,7 +159,7 @@ class auto_server():
             try:
                 os.killpg(p.pid, signal.SIGKILL)
             except:
-                print("Error killing %s")%role
+                print("Error killing %s"%role)
 
         self.process_pool = {}
         self.output_dict = {}
