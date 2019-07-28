@@ -91,7 +91,7 @@ class auto_server():
             device = config["device"]
             cmd = "python %s %s" % (server_script_path, device)
             print(cmd)
-            return
+            # return
 
 
         elif role == "client":
@@ -114,7 +114,7 @@ class auto_server():
 
             cmd = "python %s %s"%(client_script_path, param_list)
             print(cmd)
-            return
+            # return
 
         elif role == "controller":
             cmd = "python controller.py"
@@ -135,7 +135,7 @@ class auto_server():
             for item in cpu_server_list:
                 cmd = cmd + item + " "
             print(cmd)
-            return
+            # return
         elif role == "test":
             cmd = "python print_test.py"
         else:
