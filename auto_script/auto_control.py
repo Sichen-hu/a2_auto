@@ -41,6 +41,14 @@ if __name__ == "__main__":
             }
     }
 
+    act_server_dict = {
+            'type': "activate",
+            "config": {
+                "role": "server",
+                "device": "gpu"
+            }
+    }
+
 
     status_dict = {
         'type': "status",
@@ -56,4 +64,4 @@ if __name__ == "__main__":
     end_dict = {
         'type': "terminate",
     }
-    asyncio.run(sendmsg('3.1.239.165',20020,act_scheduler_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))

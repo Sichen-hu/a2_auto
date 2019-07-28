@@ -38,7 +38,7 @@ server_profile1 = {
 
 # controller　send decision
 class a2_ml_server ():
-    def __init__(self,addr,port,device="cpu"):
+    def __init__(self,addr="0.0.0.0",port="9949",device="cpu"):
         # print(MODEL_VERSION,DATA_VERSION)
         self.dict_tool = db.dict_bytes()
         self.device = device
@@ -127,7 +127,7 @@ class a2_ml_server ():
 
 
     def update_config_file(self, model_name,config):
-        
+
         config_file = "%s%s.config"%(self.config_root,model_name)
         # return config_file
         if not os.path.exists(self.config_root):
@@ -152,7 +152,7 @@ class a2_ml_server ():
             config_file = self.update_config_file(model_name,config)
             frac = config["frac"]
 
-            for p in ports: 
+            for p in ports:
                 if self.device == "gpu":
                     cmd_run = f'docker run --runtime=nvidia --name="{model_name + "_"+str(p)}"  -p {p}:8501  '\
                             f'--mount type=bind,source={self.model_root + model_name}/,target=/models/{model_name} ' \

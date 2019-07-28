@@ -90,6 +90,8 @@ class auto_server():
             server_script_path = "/home/ubuntu/a2_auto/server_src/server_main.py"
             device = config["device"]
             cmd = "python %s %s" % (server_script_path, device)
+            print(cmd)
+            return
 
 
         elif role == "client":

@@ -1,10 +1,5 @@
 from server.a2_ml_server import a2_ml_server
-import argparse
+import sys
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-a",default='0.0.0.0',) #server ip addr
-parser.add_argument("-p",default=9949) # server port
-
-args = parser.parse_args()
-
-a2_ml_server(args.a,args.p)
+device = sys.argv[1]
+a2_ml_server(device= device)
