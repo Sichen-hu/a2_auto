@@ -129,7 +129,7 @@ class a2_client():
 
     async def client_core(self):
         await self.phase_one()
-
+        print("Phase one Ended")
         start_time = time.time()
         trace_iter = itertools.cycle(self.trace_data)
         count = 0

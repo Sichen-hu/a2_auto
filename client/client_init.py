@@ -6,7 +6,6 @@ import subprocess
 def unbuffered_print(p_str):
     print(p_str, flush=True)
 
-
 class client_generator():
     def __init__(self,region_id, client_number, zipf_param,
                 dist_def = "random", min_acc=0.5, max_acc=0.9,
