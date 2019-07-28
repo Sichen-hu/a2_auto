@@ -68,13 +68,29 @@ if __name__ == "__main__":
     output_dict = {
         'type': "output",
         "config": {
-            "role": "scheduler"
+            "role": "client"
         }
     }
 
     end_dict = {
         'type': "terminate",
     }
-    asyncio.run(sendmsg('3.1.239.165',20020,pull_dict))
+
+    print("start server, scheduler and client")
+    asyncio.run(sendmsg('3.1.239.165',20020,act_scheduler_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,act_client_dict))
+    input()
+    print("\n\n")
+    print("status")
+    asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+    input()
+    print("output of client")
+    asyncio.run(sendmsg('3.1.239.165',20020,output_dict))
+    input()
+    print("terminate")
+    asyncio.run(sendmsg('3.1.239.165',20020,end_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+
     # asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
     # asyncio.run(sendmsg('127.0.0.1',20020,end_dict))

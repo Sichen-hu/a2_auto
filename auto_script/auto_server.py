@@ -3,7 +3,7 @@ import logging
 import subprocess
 import json
 import dict_bytes as db
-import os
+import os,signal
 import time
 # from .model import *
 # from .measurement import *
@@ -156,7 +156,7 @@ class auto_server():
 
     def terminate_process(self):
         for role, p in self.process_pool.items():
-            p.kill()
+            os.killpg(p.pid, signal.SIGKILL)
 
         self.process_pool = {}
         self.output_dict = {}
