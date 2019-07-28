@@ -10,12 +10,12 @@ import time
 # from .measurement import *
 # from .placement import Placement
 
-logging.basicConfig(level= logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 server_profile = {
-    "mobile_dcp_0":{
-        "port":[10101,10102],
+    "mobile_dcp_0" : {
+        "port" : [10101,10102],
         "frac":0.08,
         "batch":2,
         "timeout":10,
@@ -136,7 +136,7 @@ class cluster_scheduler ():
             self.handle_socket, self.addr, self.port)
 
         addr = server.sockets[0].getsockname ()
-        print (f'Serving on {addr}')
+        print(f'Serving on {addr}')
 
         async with server:
             await server.serve_forever ()
