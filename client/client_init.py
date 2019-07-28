@@ -65,7 +65,7 @@ class client_generator():
             acc_limit = self.get_acc()
             lat_limit = self.get_lat()
             trace_file = self.get_trace(model_name)
-            command = base_command % (self.region_id, i, model_name, "%.3f"%acc_limit, "%.3f"%lat_limit, trace_file,self.comm_interval)
+            command = base_command % (client_path, self.region_id, i, model_name, "%.3f"%acc_limit, "%.3f"%lat_limit, trace_file,self.comm_interval)
             command_list.append(command)
 
         return command_list

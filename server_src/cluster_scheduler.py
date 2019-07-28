@@ -45,7 +45,6 @@ class cluster_scheduler ():
         self.gpu_server_list = gpu_server_list
         if len(cpu_server_list) + len(gpu_server_list) == 0:
             unbuffered_print("No avaliable server")
-            exit(1)
 
         self.server_port = 9949
 

@@ -61,15 +61,20 @@ if __name__ == "__main__":
         'type': "status",
     }
 
+    pull_dict = {
+        'type': "pull",
+    }
+
     output_dict = {
         'type': "output",
         "config": {
-            "role": "server"
+            "role": "scheduler"
         }
     }
 
     end_dict = {
         'type': "terminate",
     }
-    asyncio.run(sendmsg('3.1.239.165',20020,end_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,pull_dict))
+    # asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
     # asyncio.run(sendmsg('127.0.0.1',20020,end_dict))

@@ -35,7 +35,7 @@ class auto_server():
         self.process_pool = {}
         self.active_role = []
         self.output_dict = {}
-        self.source_root = "/home/ubuntu/a2_source/"
+        self.source_root = "/home/ubuntu/a2_auto/"
 
         self.init_source()
         self.run = asyncio.run(self.main())
@@ -74,9 +74,8 @@ class auto_server():
 
     def pull_latest_source(self):
         cmd = "cd %s; git pull" % self.source_root
-        # p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        # p.wait()
-        print(cmd)
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        p.wait()
         return {"result_code": 1,"result_info":"Pull Done"}
 
     def activate_role(self,config):
