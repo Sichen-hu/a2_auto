@@ -81,7 +81,7 @@ if __name__ == "__main__":
         'type': "terminate",
     }
 
-    if 1:
+    if 0:
         print("start server, scheduler and client")
         asyncio.run(sendmsg('3.1.239.165',20020,act_scheduler_dict))
         asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
@@ -98,7 +98,7 @@ if __name__ == "__main__":
         asyncio.run(sendmsg('3.1.239.165',20020,end_dict))
         asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
     else:
-        asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+        asyncio.run(sendmsg('3.1.239.165',20020,output_dict))
 
     # asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
     # asyncio.run(sendmsg('127.0.0.1',20020,end_dict))

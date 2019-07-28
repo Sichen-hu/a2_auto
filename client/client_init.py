@@ -3,6 +3,9 @@ import os
 import sys
 import subprocess
 
+temp = sys.stdout
+sys.stderr = temp
+
 def unbuffered_print(p_str):
     print(p_str, flush=True)
 
