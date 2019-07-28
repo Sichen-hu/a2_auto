@@ -3,6 +3,10 @@ import os
 import sys
 import subprocess
 
+def unbuffered_print(p_str):
+    print(p_str, flush=True)
+
+
 class client_generator():
     def __init__(self,region_id, client_number, zipf_param,
                 dist_def = "random", min_acc=0.5, max_acc=0.9,
@@ -15,7 +19,7 @@ class client_generator():
         self.model_name_list = model_name_list
         zipf_list = np.random.zipf(zipf_param, len(model_name_list))
         self.model_prob_list = list(zipf_list.astype("float") / np.sum(zipf_list))
-        print(self.model_prob_list)
+        unbuffered_print(self.model_prob_list)
 
 
         self.dist_def = dist_def
@@ -26,10 +30,10 @@ class client_generator():
 
     def get_model_name(self):
         if self.model_prob_list == None:
-            print("Prob None Error")
+            unbuffered_print("Prob None Error")
             exit(0)
         random_normalized_num = np.random.random()
-        print(random_normalized_num)
+        unbuffered_print(random_normalized_num)
         acc_prob = 0.0
 
         for item in zip(self.model_name_list, self.model_prob_list):
@@ -43,13 +47,13 @@ class client_generator():
     def get_acc(self):
         if self.dist_def == "random":
             return self.random_sample(self.min_acc,self.max_acc)
-        print("undefined distribution on accuracy")
+        unbuffered_print("undefined distribution on accuracy")
         exit(0)
 
     def get_lat(self):
         if self.dist_def == "random":
             return self.random_sample(self.min_lat,self.max_lat)
-        print("undefined distribution on latency")
+        unbuffered_print("undefined distribution on latency")
         exit(0)
 
     def get_trace(self,model_name):

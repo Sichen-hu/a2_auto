@@ -16,6 +16,11 @@ import itertools
 # from .measurement import *
 # from .placement import Placement
 
+
+def unbuffered_print(p_str):
+    print(p_str, flush=True)
+
+
 logging.basicConfig(level= logging.DEBUG)
 
 
@@ -49,7 +54,7 @@ def get_time():
 
 class a2_client():
     def __init__(self, ctrl_addr, ctrl_port, region_id, client_id, model_name, acc_lim, lat_lim, trace_file, comm_interval):
-        # print(MODEL_VERSION,DATA_VERSION)
+        # unbuffered_print(MODEL_VERSION,DATA_VERSION)
         self.dict_tool = db.dict_bytes()
         self.region_id = region_id
         self.client_id = client_id
@@ -62,7 +67,7 @@ class a2_client():
         try:
             trace_data = list(np.load(trace_file))
         except:
-            print("Reading trace file Error, using default settings")
+            unbuffered_print("Reading trace file Error, using default settings")
             trace_data = [2] * 3600
 
         self.trace_data = trace_data[:1]
@@ -112,13 +117,13 @@ class a2_client():
         #   self.ctrl_addr, self.ctrl_port)
 
         # await self.dict_tool.send_dict2bytes (message, writer)
-        # print("Sent Phase one to controller")
+        # unbuffered_print("Sent Phase one to controller")
 
         # controller_msg = await self.dict_tool.read_bytes2dict(reader,writer)
         # self.process_controller_msg(controller_msg)
         # writer.close()
-        print(self.trace_data)
-        print(message)
+        unbuffered_print(self.trace_data)
+        unbuffered_print(message)
         self.process_controller_msg(1)
 
 
@@ -131,7 +136,7 @@ class a2_client():
         while True:
             count += 1
             num_request = next(trace_iter)
-            print("%s Requests generated at %s"%(num_request,get_time()))
+            unbuffered_print("%s Requests generated at %s"%(num_request,get_time()))
             reqs = self.request_generator(count,num_request)
             self.dispatch_requests(reqs)
 
@@ -139,28 +144,28 @@ class a2_client():
 
             if count == len(self.trace_data):
                 while len(self.req_history.keys()) != self.total_req_number:
-                    # print(len(self.req_history.keys()),self.total_req_number)
+                    # unbuffered_print(len(self.req_history.keys()),self.total_req_number)
                     pass
 
                 # Communication
-                print("Send to Controller & Wait settings")
+                unbuffered_print("Send to Controller & Wait settings")
                 await self.send_to_controller()
 
-                print("Restart Client")
+                unbuffered_print("Restart Client")
                 time.sleep(3)
 
                 count = 0
                 self.total_req_number = 0
                 self.req_history = {}
             else:
-                print("Server sleep %s Secs"%1)
+                unbuffered_print("Server sleep %s Secs"%1)
                 time.sleep(1)
 
 
 
     def config_generator(self):
         if self.config_prob_list == None:
-            print("Prob None Error")
+            unbuffered_print("Prob None Error")
             exit(0)
 
         config_list = self.config_prob_list[0]
@@ -243,12 +248,12 @@ class a2_client():
         message["requests"] = self.req_history
         message["model_name"] = self.model_name
 
-        print(message)
+        unbuffered_print(message)
         reader, writer = await asyncio.open_connection(
           self.ctrl_addr, self.ctrl_port)
 
         await self.dict_tool.send_dict2bytes (message, writer)
-        print("Sent to controller")
+        unbuffered_print("Sent to controller")
 
         controller_msg = await self.dict_tool.read_bytes2dict(reader,writer)
         self.process_controller_msg(controller_msg)
@@ -272,5 +277,5 @@ if __name__ == "__main__":
     latency_limit = args[5]
     trace_file = args[6]
     comm_interval = args[7]
-    print(args)
+    unbuffered_print(args)
     a2_client("18.139.237.235",8888,region_id, client_id, model_name, acc_limit, latency_limit, trace_file, comm_interval)
