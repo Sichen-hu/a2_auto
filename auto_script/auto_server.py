@@ -117,7 +117,22 @@ class auto_server():
         elif role == "controller":
             cmd = "python controller.py"
         elif role == "scheduler":
-            cmd = "python scheduler.py"
+            gpu_server_list = config["gpu_server"]
+            cpu_server_list = config["cpu_server"]
+
+            scheduler_path = "/home/ubuntu/a2_auto/server_src/cluster_scheduler.py"
+
+            cmd = "python %s " % scheduler_path
+
+            for item in gpu_server_list:
+                cmd = cmd + item + " "
+
+            cmd = cmd + "| "
+
+            for item in cpu_server_list:
+                cmd = cmd + item + " "
+            print(cmd)
+            return
         elif role == "test":
             cmd = "python print_test.py"
         else:

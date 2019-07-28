@@ -6,6 +6,7 @@ from shlex import quote
 import server.dict_bytes as db
 import os
 import time
+import sys
 # from .model import *
 # from .measurement import *
 # from .placement import Placement
@@ -29,7 +30,7 @@ server_profile = {
 
 # controller　send decision
 class cluster_scheduler ():
-    def __init__(self,addr="0.0.0.0",port="9000"):
+    def __init__(self,addr="0.0.0.0",port="9000",cpu_server_list = [], gpu_server_list = []):
         # print(MODEL_VERSION,DATA_VERSION)
         self.dict_tool = db.dict_bytes()
         # self.p_ij = np.zeros((MODEL_VERSION,DATA_VERSION))
@@ -38,8 +39,12 @@ class cluster_scheduler ():
         self.addr = addr
         self.server_load_send = {'type':'load'}
         self.server_allocat_get = {}
-        self.cpu_server_list = ["127.0.0.1"]
-        self.gpu_server_list = []
+        self.cpu_server_list = cpu_server_list
+        self.gpu_server_list = gpu_server_list
+        if len(cpu_server_list) + len(gpu_server_list) == 0:
+            print("No avaliable server")
+            exit(1)
+
         self.server_port = 9949
 
         self.controller_writer = None
@@ -151,4 +156,18 @@ class cluster_scheduler ():
 
 
 if __name__=="__main__":
-    a2 = cluster_scheduler()
+    args = sys.argv[1:]
+    gpu_server = []
+    cpu_server = []
+
+    flag = False
+    for item in args:
+        if item == "|":
+            flag = True
+            continue
+        if flag:
+            cpu_server.append(item)
+        else:
+            gpu_server.append(item)
+
+    a2 = cluster_scheduler(cpu_server_list = cpu_server, gpu_server_list=gpu_server)

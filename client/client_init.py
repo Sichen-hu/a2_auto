@@ -58,7 +58,8 @@ class client_generator():
     def command_gen(self):
 
         command_list = []
-        base_command = "python client.py %s %s %s %s %s %s %s "
+        client_path = "/home/ubuntu/a2_auto/client/client.py"
+        base_command = "python %s %s %s %s %s %s %s %s "
         for i in range(self.client_number):
             model_name = self.get_model_name()
             acc_limit = self.get_acc()

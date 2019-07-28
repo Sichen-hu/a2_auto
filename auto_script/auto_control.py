@@ -16,12 +16,31 @@ async def sendmsg(host, port, act_dict):  #
 
 
 if __name__ == "__main__":
-    act_dict = {
+    act_client_dict = {
             'type': "activate",
             "config": {
-                "role": "test"
+                "role": "client",
+                "region_id": 0,
+                "client_number": 10,
+                "zipf_param": 2,
+                "min_acc": 0.5,
+                "max_acc": 0.9,
+                "min_lat": 1.0,
+                "max_lat": 5.0,
+                "comm": 5,
+                "seed": 0
             }
     }
+
+    act_scheduler_dict = {
+            'type': "activate",
+            "config": {
+                "role": "scheduler",
+                "gpu_server":["127.0.0.1", "127.0.0.2"],
+                "cpu_server":["127.0.0.3", "127.0.0.4"],
+            }
+    }
+
 
     status_dict = {
         'type': "status",
@@ -37,4 +56,4 @@ if __name__ == "__main__":
     end_dict = {
         'type': "terminate",
     }
-    asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,act_dict))
