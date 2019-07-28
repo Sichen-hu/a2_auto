@@ -142,7 +142,7 @@ class auto_server():
 
         logfile = "/tmp/%s.log"%role
         cmd = cmd + " > %s"%logfile
-        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,preexec_fn=os.setsid)
 
         # if role in self.process_pool.keys():
         #     self.process_pool[role].append(p)
@@ -158,7 +158,7 @@ class auto_server():
         for role, p in self.process_pool.items():
             print(p.pid)
             try:
-                os.killpg(p.pid, signal.SIGKILL)
+                os.killpg(os.getpgid(p.pid), signal.SIGTERM)
             except:
                 print("Error killing %s"%role)
 
