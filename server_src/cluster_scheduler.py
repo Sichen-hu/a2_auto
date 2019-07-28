@@ -162,7 +162,7 @@ if __name__=="__main__":
 
     flag = False
     for item in args:
-        if item == "|":
+        if item == "s":
             flag = True
             continue
         if flag:

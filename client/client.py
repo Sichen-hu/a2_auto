@@ -64,7 +64,7 @@ class a2_client():
         except:
             print("Reading trace file Error, using default settings")
             trace_data = [2] * 3600
-        
+
         self.trace_data = trace_data[:1]
         self.total_requests_number = np.sum(self.trace_data)
 
@@ -79,7 +79,7 @@ class a2_client():
                 "data_ver":2,
                 "prob": 1.0
             }
-            
+
         }
         self.config_prob_list = [[decision_dict],[1.0]]
         self.req_history = {}
@@ -120,7 +120,7 @@ class a2_client():
         print(self.trace_data)
         print(message)
         self.process_controller_msg(1)
-        
+
 
     async def client_core(self):
         await self.phase_one()
@@ -128,7 +128,7 @@ class a2_client():
         start_time = time.time()
         trace_iter = itertools.cycle(self.trace_data)
         count = 0
-        while True: 
+        while True:
             count += 1
             num_request = next(trace_iter)
             print("%s Requests generated at %s"%(num_request,get_time()))
@@ -136,7 +136,7 @@ class a2_client():
             self.dispatch_requests(reqs)
 
             # time.sleep(10000)
-            
+
             if count == len(self.trace_data):
                 while len(self.req_history.keys()) != self.total_req_number:
                     # print(len(self.req_history.keys()),self.total_req_number)
@@ -212,7 +212,7 @@ class a2_client():
                 "data_ver":2,
                 "prob": 1.0
             }
-            
+
         }
         config_list = []
         prob_list = []
@@ -225,7 +225,7 @@ class a2_client():
 
             prob_list.append(values["prob"])
             config_list.append(config)
-        
+
         self.config_prob_list = [config_list,prob_list]
 
 

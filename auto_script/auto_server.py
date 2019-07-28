@@ -116,6 +116,7 @@ class auto_server():
 
         elif role == "controller":
             cmd = "python controller.py"
+
         elif role == "scheduler":
             gpu_server_list = config["gpu_server"]
             cpu_server_list = config["cpu_server"]
@@ -127,7 +128,7 @@ class auto_server():
             for item in gpu_server_list:
                 cmd = cmd + item + " "
 
-            cmd = cmd + "| "
+            cmd = cmd + "s "
 
             for item in cpu_server_list:
                 cmd = cmd + item + " "
