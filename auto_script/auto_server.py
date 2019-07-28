@@ -87,9 +87,33 @@ class auto_server():
 
 
         if role == "server":
-            cmd = "python server.py"
+            server_script_path = "/home/ubuntu/a2_auto/server_src/server_main.py"
+            device = config["device"]
+            cmd = "python %s %s" % (server_script_path, device)
+
+
         elif role == "client":
-            cmd = "python client.py"
+            region_id = config["region_id"]
+            client_number = config["client_number"]
+            zipf_param = config["zipf_param"]
+            min_acc = config["min_acc"]
+            max_acc = config["max_acc"]
+            min_lat = config["min_lat"]
+            max_lat = config["max_lat"]
+            comm_interval = config["comm"]
+            random_seed = config["seed"]
+
+            param_list = "%s %s %s %s %s %s %s %s %s"
+            param_list = param_list % (region_id, client_number, zipf_param,
+                                        min_acc, max_acc, min_lat, max_lat,
+                                        comm_interval, random_seed)
+
+            client_script_path = "/home/ubuntu/a2_auto/client/client_init.py"
+
+            cmd = "python %s %s"%(client_script_path, param_list)
+            print(cmd)
+            return
+
         elif role == "controller":
             cmd = "python controller.py"
         elif role == "scheduler":

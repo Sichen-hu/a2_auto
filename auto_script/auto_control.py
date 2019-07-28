@@ -37,4 +37,4 @@ if __name__ == "__main__":
     end_dict = {
         'type': "terminate",
     }
-    asyncio.run(sendmsg('127.0.0.1',20020,status_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
