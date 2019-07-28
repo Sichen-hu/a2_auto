@@ -11,6 +11,8 @@ import os
 
 logging.basicConfig(level= logging.DEBUG)
 
+def unbuffered_print(p_str):
+    print(p_str, flush=True)
 
 server_profile1 = {
     "type":"allocation",
@@ -60,7 +62,7 @@ class a2_ml_server ():
             self.server_allocat_get = receive_data
 
             self.scheduler_writer = writer
-            print(receive_data)
+            unbuffered_print(receive_data)
 
             logging.info('Recive allocation from controller!')
 
@@ -86,8 +88,8 @@ class a2_ml_server ():
         p = subprocess.Popen(cmd2, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
 
-        print("clear docker")
-        print('done!')
+        unbuffered_print("clear docker")
+        unbuffered_print('done!')
 
 
     async def allocator(self):
@@ -96,7 +98,7 @@ class a2_ml_server ():
         # await self.docker_run(server_profile1)
 
         while True:
-            print("Wait Profile")
+            unbuffered_print("Wait Profile")
             allocat_dict = await self.allocat_que.get()
             self.clear_docker()
             await self.docker_run(allocat_dict)
@@ -116,14 +118,14 @@ class a2_ml_server ():
     #             stderr=asyncio.subprocess.PIPE)
     #         stdout, stderr = await proc.communicate ()
     #         # self.server_load = stdout.decode().splitlines()
-    #         # print(stdout.decode().splitlines())
+    #         # unbuffered_print(stdout.decode().splitlines())
     #         self.server_load = [json.loads (i) for i in stdout.decode().splitlines()]
     #         # self.server_load_send = {i['container']:{'cpu':i['cpu'],'net':i['net'] } for i in self.server_load}
     #         self.server_load_send = {i['container']:i['cpu'] for i in self.server_load}
     #         self.server_load_send['type']= 'load'
-    #         print(self.server_load_send)
+    #         unbuffered_print(self.server_load_send)
     #         logging.info('Update: load update')
-    #         # print(stdout.decode().splitlines())
+    #         # unbuffered_print(stdout.decode().splitlines())
 
 
     def update_config_file(self, model_name,config):
@@ -144,7 +146,7 @@ class a2_ml_server ():
 
 
     async def docker_run(self,decision_dict):
-        print('docker run')
+        unbuffered_print('docker run')
         del decision_dict["type"]
         # decision_dict = self.init_allocate()
         for model_name, config in decision_dict.items ():
@@ -166,7 +168,7 @@ class a2_ml_server ():
                             f' -e MODEL_NAME={model_name} -t tensorflow/serving:latest '\
                             f' --enable_batching=true --batching_parameters_file=/models/batching_parameters.config &'
 
-                print(cmd_run)
+                unbuffered_print(cmd_run)
                 subprocess.Popen(cmd_run, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         result = {"result_code":1,"result_info":"Done"}

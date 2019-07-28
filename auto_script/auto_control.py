@@ -49,6 +49,13 @@ if __name__ == "__main__":
             }
     }
 
+    act_test_dict = {
+            'type': "activate",
+            "config": {
+                "role": "test"
+            }
+    }
+
 
     status_dict = {
         'type': "status",
@@ -64,4 +71,5 @@ if __name__ == "__main__":
     end_dict = {
         'type': "terminate",
     }
-    asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
+    asyncio.run(sendmsg('3.1.239.165',20020,act_test_dict))
+    # asyncio.run(sendmsg('127.0.0.1',20020,end_dict))

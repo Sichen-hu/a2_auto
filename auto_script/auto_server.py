@@ -141,6 +141,8 @@ class auto_server():
         else:
             return {"result_code": 0,"result_info":"Undefined Type"}
 
+        logfile = "/tmp/%s.log"%role
+        cmd = cmd + " > %s"%logfile
         p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 
         # if role in self.process_pool.keys():
@@ -148,7 +150,7 @@ class auto_server():
         #     self.output_dict[role].append("")
         # else:
         self.process_pool[role] = p
-        self.output_dict[role] = ""
+        self.output_dict[role] = logfile
 
         return {"result_code": 1,"result_info":"Activate Done"}
 
@@ -174,16 +176,21 @@ class auto_server():
 
     def get_output(self,config):
         target = config["role"]
-        return {"output":self.output_dict[target]}
+        with open(self.output_dict[target],"r") as f:
+
+            return {"output":f.readlines()}
 
 
-    async def gather_process_output(self):
-        while True:
-            await asyncio.sleep(3)
-            for role, p in self.process_pool.items():
-                returncode = p.poll()
-                if returncode is None:
-                    self.output_dict[role] += p.stdout.readline().decode()
+    # async def gather_process_output(self):
+    #     while True:
+    #         await asyncio.sleep(3)
+    #         for role, p in self.process_pool.items():
+    #             returncode = p.poll()
+    #             if returncode is None:
+    #                 outline = p.stdout.readline().decode()
+    #                 print(outline)
+    #                 self.output_dict[role] += outline
+    #                 # print(p.stdout.readable())
 
 
     async def socket(self):
@@ -197,7 +204,7 @@ class auto_server():
             await server.serve_forever()
 
     async def main(self):
-        await asyncio.gather(self.socket(),self.gather_process_output())
+        await asyncio.gather(self.socket())
 
 
 if __name__ == "__main__":

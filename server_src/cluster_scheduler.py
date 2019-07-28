@@ -11,8 +11,10 @@ import sys
 # from .measurement import *
 # from .placement import Placement
 
-logging.basicConfig(level=logging.DEBUG)
+def unbuffered_print(p_str):
+    print(p_str, flush=True)
 
+logging.basicConfig(level=logging.DEBUG)
 
 server_profile = {
     "mobile_dcp_0" : {
@@ -31,7 +33,7 @@ server_profile = {
 # controller　send decision
 class cluster_scheduler ():
     def __init__(self,addr="0.0.0.0",port="9000",cpu_server_list = [], gpu_server_list = []):
-        # print(MODEL_VERSION,DATA_VERSION)
+        # unbuffered_print((MODEL_VERSION,DATA_VERSION)
         self.dict_tool = db.dict_bytes()
         # self.p_ij = np.zeros((MODEL_VERSION,DATA_VERSION))
         # self.placement_ins = Placement(place_policy)
@@ -42,7 +44,7 @@ class cluster_scheduler ():
         self.cpu_server_list = cpu_server_list
         self.gpu_server_list = gpu_server_list
         if len(cpu_server_list) + len(gpu_server_list) == 0:
-            print("No avaliable server")
+            unbuffered_print(("No avaliable server")
             exit(1)
 
         self.server_port = 9949
@@ -59,7 +61,7 @@ class cluster_scheduler ():
             if receive_data['type'] == 'allocation':
                 # {'type':'allocation', 'allocation': {},'step':1}
                 self.server_allocat_get = receive_data
-                # print(receive_data,1111)
+                # unbuffered_print((receive_data,1111)
                 logging.info('Recive allocation from controller at %s '%time.time())
                 await self.allocat_que.put (self.server_allocat_get)
 
@@ -83,7 +85,7 @@ class cluster_scheduler ():
 
         while True:
             allocat_dict = await self.allocat_que.get()
-            print("Msg from Controller: %s" % allocat_dict)
+            unbuffered_print(("Msg from Controller: %s" % allocat_dict)
             schedule_result = await self.server_run(allocat_dict)
 
             await self.dict_tool.send_dict2bytes(schedule_result,self.controller_writer)
@@ -92,11 +94,11 @@ class cluster_scheduler ():
 
     async def send_decision(self,decision_dict,target_ip):
         decision_dict["type"] = "allocation"
-        print(target_ip, self.server_port)
+        unbuffered_print((target_ip, self.server_port)
         reader, writer = await asyncio.open_connection (
             target_ip, self.server_port)
         await self.dict_tool.send_dict2bytes (decision_dict, writer)
-        print("Send %s to %s"%(decision_dict,target_ip))
+        unbuffered_print(("Send %s to %s"%(decision_dict,target_ip))
 
         return reader,writer
 
@@ -124,12 +126,12 @@ class cluster_scheduler ():
 
         for reader,writer in connection_pool:
             server_result = await self.dict_tool.read_bytes2dict(reader,writer)
-            print(server_result)
+            unbuffered_print((server_result)
             if server_result["result_code"] != 1:
-                print("Server Error")
+                unbuffered_print(("Server Error")
             writer.close()
 
-        print("Server scheduled.")
+        unbuffered_print(("Server scheduled.")
         return {"result_code":1,"result_info":"Done"}
 
 
@@ -141,7 +143,7 @@ class cluster_scheduler ():
             self.handle_socket, self.addr, self.port)
 
         addr = server.sockets[0].getsockname ()
-        print(f'Serving on {addr}')
+        unbuffered_print((f'Serving on {addr}')
 
         async with server:
             await server.serve_forever ()
