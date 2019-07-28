@@ -11,6 +11,7 @@ from sender import tf_serving_cls
 import time, sys
 import numpy as np
 import itertools
+import traceback
 
 # from .model import *
 # from .measurement import *
@@ -269,14 +270,18 @@ class a2_client():
     # def delete_cpu0_docker(self):
 
 if __name__ == "__main__":
-    args = sys.argv
-    region_id = args[1]
-    client_id = args[2]
-    model_name = args[3]
-    acc_limit = args[4]
-    latency_limit = args[5]
-    trace_file = args[6]
-    comm_interval = args[7]
-    unbuffered_print(args)
-    1/0
-    a2_client("18.139.237.235",8888,region_id, client_id, model_name, acc_limit, latency_limit, trace_file, comm_interval)
+    try:
+        args = sys.argv
+        region_id = args[1]
+        client_id = args[2]
+        model_name = args[3]
+        acc_limit = args[4]
+        latency_limit = args[5]
+        trace_file = args[6]
+        comm_interval = args[7]
+        unbuffered_print(args)
+        1/0
+        a2_client("18.139.237.235",8888,region_id, client_id, model_name, acc_limit, latency_limit, trace_file, comm_interval)
+    except Exception as e:
+        traces = traceback.format_exc()
+        unbuffered_print(traces, e)
