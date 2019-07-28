@@ -11,7 +11,12 @@ async def sendmsg(host, port, act_dict):  #
     await dict_bytes().send_dict2bytes (test_dict, writer)
     print(f'send msg:{test_dict}')
     text = await dict_bytes().read_bytes2dict(reader,writer)
-    print(text)
+    for k,v in text.items():
+        if type(v) != type([]):
+            print(k,v)
+        else:
+            for x in v:
+                print(x)
     writer.close()
 
 
@@ -76,21 +81,24 @@ if __name__ == "__main__":
         'type': "terminate",
     }
 
-    print("start server, scheduler and client")
-    asyncio.run(sendmsg('3.1.239.165',20020,act_scheduler_dict))
-    asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
-    asyncio.run(sendmsg('3.1.239.165',20020,act_client_dict))
-    input()
-    print("\n\n")
-    print("status")
-    asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
-    input()
-    print("output of client")
-    asyncio.run(sendmsg('3.1.239.165',20020,output_dict))
-    input()
-    print("terminate")
-    asyncio.run(sendmsg('3.1.239.165',20020,end_dict))
-    asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+    if 1:
+        print("start server, scheduler and client")
+        asyncio.run(sendmsg('3.1.239.165',20020,act_scheduler_dict))
+        asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
+        asyncio.run(sendmsg('3.1.239.165',20020,act_client_dict))
+        input()
+        print("\n\n")
+        print("status")
+        asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+        input()
+        print("output of client")
+        asyncio.run(sendmsg('3.1.239.165',20020,output_dict))
+        input()
+        print("terminate")
+        asyncio.run(sendmsg('3.1.239.165',20020,end_dict))
+        asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
+    else:
+        asyncio.run(sendmsg('3.1.239.165',20020,status_dict))
 
     # asyncio.run(sendmsg('3.1.239.165',20020,act_server_dict))
     # asyncio.run(sendmsg('127.0.0.1',20020,end_dict))

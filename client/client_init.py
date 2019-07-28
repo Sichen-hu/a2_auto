@@ -99,7 +99,7 @@ if __name__ == "__main__":
         if index == 0:
             cmd = cmd + " >>/tmp/client.log"
 
-        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     p.wait()
 
     # os.system(cmds[0])

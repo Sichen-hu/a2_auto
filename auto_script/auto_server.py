@@ -67,10 +67,21 @@ class auto_server():
         elif receive_data['type'] == 'output':
             ouput_config = receive_data["config"]
             return_data = self.get_output(ouput_config)
-
+        elif receive_data['type'] == 'clean':
+            return_data = self.clean_zombie()
 
         await self.dict_tool.send_dict2bytes(return_data, writer)
         writer.close()
+
+    def clean_zombie(self):
+        to_remove = []
+        for role, p in self.process_pool.items():
+            if p.poll() is not None:
+                to_remove.append(role)
+        for item in to_remove:
+            del self.process_pool[item]
+            del self.output_dict[item]
+
 
     def pull_latest_source(self):
         cmd = "cd %s; git pull" % self.source_root
