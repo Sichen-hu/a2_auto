@@ -47,7 +47,9 @@ class auto_server():
 
     async def handle_socket(self, reader, writer):
 
+
         receive_data = await self.dict_tool.read_bytes2dict(reader, writer)
+        print("receied: ", receive_data)
         return_data = None
         if receive_data['type'] == 'pull':
             return_data = self.pull_latest_source()
