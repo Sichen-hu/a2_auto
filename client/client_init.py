@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import sys
+import subprocess
 
 class client_generator():
     def __init__(self,region_id, client_number, zipf_param,
@@ -91,5 +92,11 @@ if __name__ == "__main__":
                             min_lat = min_lat, max_lat = max_lat,
                             comm_interval = comm_interval)
     cmds =  c_g.command_gen()
-    [print(x) for x in cmds]
+    for index,cmd in enumerate(cmds):
+        if index == 0:
+            cmd = cmd + " >>/tmp/client.log"
+
+        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+    p.wait()
+
     # os.system(cmds[0])

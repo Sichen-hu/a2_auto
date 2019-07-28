@@ -156,11 +156,11 @@ class auto_server():
 
     def terminate_process(self):
         for role, p in self.process_pool.items():
-            print(p.pid)
-            try:
-                os.killpg(os.getpgid(p.pid), signal.SIGTERM)
-            except:
-                print("Error killing %s"%role)
+            if p.poll() is None:
+                try:
+                    os.killpg(os.getpgid(p.pid), signal.SIGTERM)
+                except:
+                    print("Error killing %s"%role)
 
         self.process_pool = {}
         self.output_dict = {}

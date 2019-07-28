@@ -21,7 +21,7 @@ if __name__ == "__main__":
             "config": {
                 "role": "client",
                 "region_id": 0,
-                "client_number": 10,
+                "client_number": 2,
                 "zipf_param": 2,
                 "min_acc": 0.5,
                 "max_acc": 0.9,
