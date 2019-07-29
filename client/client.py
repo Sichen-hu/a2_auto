@@ -114,18 +114,19 @@ class a2_client():
                 "url":""
             }
 
-        # reader, writer = await asyncio.open_connection(
-        #   self.ctrl_addr, self.ctrl_port)
+        reader, writer = await asyncio.open_connection(
+          self.ctrl_addr, self.ctrl_port)
 
-        # await self.dict_tool.send_dict2bytes (message, writer)
-        # unbuffered_print("Sent Phase one to controller")
+        await self.dict_tool.send_dict2bytes (message, writer)
+        unbuffered_print("Sent Phase one to controller")
 
-        # controller_msg = await self.dict_tool.read_bytes2dict(reader,writer)
-        # self.process_controller_msg(controller_msg)
-        # writer.close()
-        unbuffered_print(self.trace_data)
-        unbuffered_print(message)
-        self.process_controller_msg(1)
+        controller_msg = await self.dict_tool.read_bytes2dict(reader,writer)
+        self.process_controller_msg(controller_msg)
+        writer.close()
+
+        # unbuffered_print(self.trace_data)
+        # unbuffered_print(message)
+        # self.process_controller_msg(1)
 
 
     async def client_core(self):
