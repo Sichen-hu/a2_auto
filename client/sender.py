@@ -33,6 +33,8 @@ class tf_serving_cls():
         model_version = config['model_ver']
         data_version = config['data_ver']
         url = random.sample(config["urls"],1)[0]
+        r_time = config['time']
+        batch = config["batch"]
 
         SERVER_URL = url
         # image_bytes = self.data_preprocess (self.image_path, data_version)
@@ -42,7 +44,7 @@ class tf_serving_cls():
         # response = requests.post (SERVER_URL, data=predict_request)
         # response.raise_for_status ()
         # prediction = response.json ()['results'][0]
- 
+
         # end_time = timeit.default_timer ()
         # latency = end_time-start_time
 
@@ -58,8 +60,7 @@ class tf_serving_cls():
         temp["url"] = SERVER_URL
         temp["model_ver"] = model_version
         temp["data_ver"] = data_version
+        temp["time"] = r_time
+        temp["batch"] = batch
         req_recorder[decision_dict["id"]] = temp
         return
-
-
-

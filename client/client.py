@@ -111,7 +111,10 @@ class a2_client():
             message["requests"][i] = {
                 "model_ver":0,
                 "data_ver":0,
-                "url":""
+                "url":"",
+                "real_latency":0,
+                "batch":0,
+                "time":1
             }
 
         reader, writer = await asyncio.open_connection(
