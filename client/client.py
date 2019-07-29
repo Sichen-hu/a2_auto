@@ -211,15 +211,15 @@ class a2_client():
 
 
     def process_controller_msg(self,ctrl_msg):
-        ctrl_msg = {
-            "mobile_dcp_0":{
-                "url":["http://18.136.13.110:10102/v1/models/mobile_dcp_2:classify"],
-                "model_ver":0,
-                "data_ver":2,
-                "prob": 1.0
-            }
-
-        }
+        # ctrl_msg = {
+        #     "mobile_dcp_0":{
+        #         "url":["http://18.136.13.110:10102/v1/models/mobile_dcp_2:classify"],
+        #         "model_ver":0,
+        #         "data_ver":2,
+        #         "prob": 1.0
+        #     }
+        #
+        # }
         config_list = []
         prob_list = []
         for model_version, values in ctrl_msg.items():

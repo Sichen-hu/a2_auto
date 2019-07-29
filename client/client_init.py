@@ -98,11 +98,17 @@ if __name__ == "__main__":
                             min_lat = min_lat, max_lat = max_lat,
                             comm_interval = comm_interval)
     cmds =  c_g.command_gen()
+    f = open("/tmp/clint_pid.txt","w")
+    pids = []
     for index,cmd in enumerate(cmds):
         if index == 0:
             cmd = cmd + " >>/tmp/client.log"
 
-        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, preexec_fn=os.setsid)
+        pids.append(str(p.pid))
+
+    f.writelines(pids)
+
     p.wait()
 
     # os.system(cmds[0])

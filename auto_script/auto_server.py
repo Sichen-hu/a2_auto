@@ -69,6 +69,14 @@ class auto_server():
             return_data = self.get_output(ouput_config)
         elif receive_data['type'] == 'clean':
             return_data = self.clean_zombie()
+        elif receive_data['type'] == 'cmd':
+            cmd = receive_data["cmd"]
+            p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+            p.wait()
+            p_str = ""
+            for item in p.stdout.readlines():
+                p_str += item.decode()
+            return_data = {"Result":p_str}
 
         await self.dict_tool.send_dict2bytes(return_data, writer)
         writer.close()
@@ -87,7 +95,10 @@ class auto_server():
         cmd = "cd %s; git pull" % self.source_root
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         p.wait()
-        return {"result_code": 1,"result_info":"Pull Done"}
+        p_str = ""
+        for item in p.stdout.readlines():
+            p_str += item.decode()
+        return {"result_code": 1,"result_info":p_str}
 
     def activate_role(self,config):
         role = config["role"]
@@ -172,6 +183,18 @@ class auto_server():
                     os.killpg(os.getpgid(p.pid), signal.SIGTERM)
                 except:
                     print("Error killing %s"%role)
+
+        try:
+            f = open("/tmp/clint_pid.txt","r")
+            for item in f.readlines():
+                try:
+                    pid = int(item)
+                    os.killpg(os.getpgid(pid), signal.SIGTERM)
+                except:
+                    pass
+        except:
+            pass
+
 
         self.process_pool = {}
         self.output_dict = {}
