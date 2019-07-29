@@ -7,9 +7,12 @@ import server.dict_bytes as db
 import os
 import time
 import sys
+import traceback
 # from .model import *
 # from .measurement import *
 # from .placement import Placement
+
+
 
 def unbuffered_print(p_str):
     print(p_str, flush=True)
@@ -157,18 +160,25 @@ class cluster_scheduler ():
 
 
 if __name__=="__main__":
-    args = sys.argv[1:]
-    gpu_server = []
-    cpu_server = []
+    try:
+        args = sys.argv[1:]
+        gpu_server = []
+        cpu_server = []
 
-    flag = False
-    for item in args:
-        if item == "s":
-            flag = True
-            continue
-        if flag:
-            cpu_server.append(item)
-        else:
-            gpu_server.append(item)
+        flag = False
+        for item in args:
+            if item == "s":
+                flag = True
+                continue
+            if flag:
+                cpu_server.append(item)
+            else:
+                gpu_server.append(item)
 
-    a2 = cluster_scheduler(cpu_server_list = cpu_server, gpu_server_list=gpu_server)
+        a2 = cluster_scheduler(cpu_server_list = cpu_server, gpu_server_list=gpu_server)
+    except Exception as e:
+        traces = traceback.format_exc()
+
+        with open("/tmp/scheduler.log","w+") as f:
+            f.writelines([str(traces),str(e)])
+            f.close()
