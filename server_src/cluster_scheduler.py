@@ -89,8 +89,9 @@ class cluster_scheduler ():
             allocat_dict = await self.allocat_que.get()
             unbuffered_print("Msg from Controller: %s" % allocat_dict)
             schedule_result = await self.server_run(allocat_dict)
-
+            unbuffered_print("Send back To ctrl: %s"%schedule_result)
             await self.dict_tool.send_dict2bytes(schedule_result,self.controller_writer)
+            unbuffered_print("Send back Done ")
             self.controller_writer.close()
 
 
@@ -134,6 +135,7 @@ class cluster_scheduler ():
             writer.close()
 
         unbuffered_print("Server scheduled.")
+
         return {"result_code":1,"result_info":"Done"}
 
 
