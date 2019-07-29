@@ -208,7 +208,12 @@ class a2_client():
 
 
     def get_bandwidths(self):
-        return [12,23,34]
+        bw_dict = {}
+        with open('~/a2/bw_client/bw.txt', "r") as f:
+            for item in f.readlines():
+                item = item.split(',')
+                bw_dict[item[0]]=float(item[2])
+        return bw_dict
 
 
     def process_controller_msg(self,ctrl_msg):
