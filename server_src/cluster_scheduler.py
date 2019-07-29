@@ -96,7 +96,7 @@ class cluster_scheduler ():
 
     async def send_decision(self,decision_dict,target_ip):
         decision_dict["type"] = "allocation"
-        unbuffered_print(target_ip, self.server_port)
+        unbuffered_print("%s , %s "%(target_ip, self.server_port))
         reader, writer = await asyncio.open_connection (
             target_ip, self.server_port)
         await self.dict_tool.send_dict2bytes (decision_dict, writer)
