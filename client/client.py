@@ -57,11 +57,11 @@ class a2_client():
     def __init__(self, ctrl_addr, ctrl_port, region_id, client_id, model_name, acc_lim, lat_lim, trace_file, comm_interval):
         # unbuffered_print(MODEL_VERSION,DATA_VERSION)
         self.dict_tool = db.dict_bytes()
-        self.region_id = region_id
-        self.client_id = client_id
+        self.region_id = int(region_id)
+        self.client_id = int(client_id)
         self.model_name = model_name
-        self.acc_lim = acc_lim
-        self.lat_lim = lat_lim
+        self.acc_lim = float(acc_lim)
+        self.lat_lim = float(lat_lim)
         self.comm_interval = int(comm_interval)
 
         trace_data = None
