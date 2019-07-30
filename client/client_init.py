@@ -117,7 +117,7 @@ if __name__ == "__main__":
         pids.append(str(p.pid))
 
     f.writelines(pids)
-
+    f.close()
     p.wait()
 
     # os.system(cmds[0])

@@ -104,7 +104,7 @@ class a2_client():
         message["client_id"] = self.client_id
         message["location_id"] = self.region_id
         message["acc_limit"] = self.acc_lim
-        message["latency_limit"] = self.acc_lim
+        message["latency_limit"] = self.lat_lim
         message["model_name"] = self.model_name
         message["requests"] = {}
         for i in range(self.total_requests_number):
@@ -255,7 +255,7 @@ class a2_client():
         message["client_id"] = self.client_id
         message["location_id"] = self.region_id
         message["acc_limit"] = self.acc_lim
-        message["latency_limit"] = self.acc_lim
+        message["latency_limit"] = self.lat_lim
         message["requests"] = self.req_history
         message["model_name"] = self.model_name
 
