@@ -145,8 +145,6 @@ class a2_client():
             reqs = self.request_generator(count,num_request)
             self.dispatch_requests(reqs)
 
-            # time.sleep(10000)
-
             if count == len(self.trace_data):
                 while len(self.req_history.keys()) != self.total_req_number:
                     # unbuffered_print(len(self.req_history.keys()),self.total_req_number)

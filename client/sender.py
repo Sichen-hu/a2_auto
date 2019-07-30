@@ -7,7 +7,8 @@ import random
 from PIL import Image
 from io import  BytesIO
 
-
+def unbuffered_print(p_str):
+    print(p_str, flush=True)
 
 class tf_serving_cls():
     def __init__(self):
@@ -29,7 +30,7 @@ class tf_serving_cls():
     def tf_serving_request(self, decision_dict,req_recorder):
         # print(decision_dict)
         config = decision_dict["config"]
-        print(config)
+        unbuffered_print(config)
         model_version = config['model_ver']
         data_version = config['data_ver']
         url = random.sample(config["urls"],1)[0]
@@ -51,7 +52,7 @@ class tf_serving_cls():
         # print ('Prediction class: {}, '
         #        'avg latency: {:.2f} ms'.format (prediction[0][0],latency*1000))
         latency = 0.1*10
-        print("    sleep %s" % latency)
+        unbuffered_print("    sleep %s" % latency)
         time.sleep(latency)
 
 
@@ -63,4 +64,5 @@ class tf_serving_cls():
         temp["time"] = r_time
         temp["batch"] = batch
         req_recorder[decision_dict["id"]] = temp
+        unbuffered_print("Send Thread Done")
         return
