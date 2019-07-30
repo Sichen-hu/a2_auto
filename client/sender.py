@@ -37,39 +37,43 @@ class tf_serving_cls():
         url = random.sample(config["urls"],1)[0]
         r_time = config['time']
         batch = config["batch"]
-        try:
-            SERVER_URL = url
-            image_bytes = self.data_preprocess (self.image_path, data_version)
-            predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
+        count = 0
+        while count <= 9:
+            try:
+                SERVER_URL = url
+                image_bytes = self.data_preprocess (self.image_path, data_version)
+                predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
 
-            start_time = timeit.default_timer()
-            response = requests.post (SERVER_URL, data=predict_request)
-            response.raise_for_status ()
-            prediction = response.json ()['results'][0]
+                start_time = timeit.default_timer()
+                response = requests.post (SERVER_URL, data=predict_request)
+                response.raise_for_status ()
+                prediction = response.json ()['results'][0]
 
-            end_time = timeit.default_timer ()
-            latency = end_time-start_time
+                end_time = timeit.default_timer ()
+                latency = end_time-start_time
 
-            unbuffered_print('Prediction class: %s, avg latency: %.2f ms'%(prediction[0][0],latency*1000))
-        except Exception as e:
-            traces = traceback.format_exc()
+                unbuffered_print('Prediction class: %s, avg latency: %.2f ms'%(prediction[0][0],latency*1000))
+                temp = {}
+                temp["real_latency"] = latency
+                temp["url"] = SERVER_URL
+                temp["model_ver"] = model_version
+                temp["data_ver"] = data_version
+                temp["time"] = r_time
+                temp["batch"] = batch
+                req_recorder[decision_dict["id"]] = temp
+                unbuffered_print("Send Thread Done")
+                return
 
-            with open("/tmp/client.log","a") as f:
-                f.writelines([str(traces),str(e)])
-                f.close()
+            except Exception as e:
+                traces = traceback.format_exc()
+                time.sleep(1)
+                count += 1
+
+        with open("/tmp/client.log","a") as f:
+            f.writelines([str(traces),str(e)])
+            f.close()
+
 
         # latency = 0.1*10
         # unbuffered_print("    sleep %s" % latency)
         # time.sleep(latency)
-
-
-        temp = {}
-        temp["real_latency"] = latency
-        temp["url"] = SERVER_URL
-        temp["model_ver"] = model_version
-        temp["data_ver"] = data_version
-        temp["time"] = r_time
-        temp["batch"] = batch
-        req_recorder[decision_dict["id"]] = temp
-        unbuffered_print("Send Thread Done")
-        return
