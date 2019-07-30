@@ -125,11 +125,13 @@ class auto_server():
             max_lat = config["max_lat"]
             comm_interval = config["comm"]
             random_seed = config["seed"]
+            mobile_trace = config["mobile_trace"]
+            res18_trace = config["res18_trace"]
 
-            param_list = "%s %s %s %s %s %s %s %s %s"
+            param_list = "%s %s %s %s %s %s %s %s %s %s %s"
             param_list = param_list % (region_id, client_number, zipf_param,
                                         min_acc, max_acc, min_lat, max_lat,
-                                        comm_interval, random_seed)
+                                        comm_interval, random_seed, mobile_trace,res18_trace)
 
             client_script_path = "/home/ubuntu/a2_auto/client/client_init.py"
 

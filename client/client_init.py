@@ -10,13 +10,19 @@ def unbuffered_print(p_str):
     print(p_str, flush=True)
 
 class client_generator():
-    def __init__(self,region_id, client_number, zipf_param,
+    def __init__(self,region_id, client_number, zipf_param,mobile_trace,res18_trace,
                 dist_def = "random", min_acc=0.5, max_acc=0.9,
                 max_lat=5.0, min_lat=1.0,
-                comm_interval = 5,model_name_list=["mobile","res18"], ):
+                comm_interval = 5,model_name_list=["mobile","res18"],):
         self.region_id = region_id
         self.client_number = client_number
         self.comm_interval = comm_interval
+
+        trace_path = "/home/ubuntu/a2_auto/client/traces/region_%s/content_%s.npy"
+        self.trace_file = {
+            "mobile":trace_path%(self.region_id,mobile_trace),
+            "res18":trace_path%(self.region_id,res18_trace)
+        }
 
         self.model_name_list = model_name_list
         zipf_list = np.random.zipf(zipf_param, len(model_name_list))
@@ -59,8 +65,8 @@ class client_generator():
         exit(0)
 
     def get_trace(self,model_name):
-        trace_root = "traces/region_%s/%s.npy"%(self.region_id, model_name)
-        return trace_root
+
+        return self.trace_file[model_name]
 
     def command_gen(self):
 
@@ -89,14 +95,17 @@ if __name__ == "__main__":
     min_lat = float(args[6])
     max_lat = float(args[7])
     comm_interval = int(args[8])
-    comm_interval = int(args[8])
+    rand_seed = int(args[9])
+    mobile_trace = int(args[10])
+    res18_trace = int(args[11])
 
 
-    np.random.seed(1)
+    np.random.seed(rand_seed)
     c_g = client_generator(region_id = region_id, client_number=client_number,
                             zipf_param=zipf_param, min_acc=min_acc, max_acc=max_acc,
                             min_lat = min_lat, max_lat = max_lat,
-                            comm_interval = comm_interval)
+                            comm_interval = comm_interval,mobile_trace=mobile_trace,
+                            res18_trace=res18_trace)
     cmds =  c_g.command_gen()
     f = open("/tmp/clint_pid.txt","w")
     pids = []
