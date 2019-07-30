@@ -181,6 +181,6 @@ if __name__=="__main__":
     except Exception as e:
         traces = traceback.format_exc()
 
-        with open("/tmp/scheduler.log","w+") as f:
+        with open("/tmp/scheduler.log","a") as f:
             f.writelines([str(traces),str(e)])
             f.close()
