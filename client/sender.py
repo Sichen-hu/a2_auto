@@ -40,6 +40,7 @@ class tf_serving_cls():
         count = 0
         while count <= 9:
             try:
+                unbuffered_print("Sending Requests for %s times"%count)
                 SERVER_URL = url
                 image_bytes = self.data_preprocess (self.image_path, data_version)
                 predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
