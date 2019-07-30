@@ -13,7 +13,7 @@ def unbuffered_print(p_str):
 
 class tf_serving_cls():
     def __init__(self):
-        self.image_path = 'cat.jpg'
+        self.image_path = '/home/ubuntu/a2_auto/client/cat.jpg'
 
 
     def data_preprocess(self,data_path, data_version):
