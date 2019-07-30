@@ -46,7 +46,7 @@ class tf_serving_cls():
                 image_bytes = self.data_preprocess (self.image_path, data_version)
                 predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
                 start_time = timeit.default_timer()
-                response = requests.post (SERVER_URL, data=predict_request)
+                response = requests.post(SERVER_URL, data=predict_request)
                 response.raise_for_status ()
                 prediction = response.json ()['results'][0]
 
@@ -69,9 +69,9 @@ class tf_serving_cls():
                 time.sleep(1)
                 count += 1
 
-        with open("/tmp/client.log","a") as f:
-            f.writelines([str(traces),str(e)])
-            f.close()
+                with open("/tmp/client.log","a") as f:
+                    f.writelines([str(traces),str(e)])
+                    f.close()
 
 
         # latency = 0.1*10

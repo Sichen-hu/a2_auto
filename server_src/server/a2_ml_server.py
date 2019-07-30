@@ -148,6 +148,8 @@ class a2_ml_server ():
     async def docker_run(self,decision_dict):
         unbuffered_print('docker run')
         del decision_dict["type"]
+        gpu_count = 0
+
         # decision_dict = self.init_allocate()
         for model_name, config in decision_dict.items ():
             ports = config["port"]
@@ -156,7 +158,8 @@ class a2_ml_server ():
 
             for p in ports:
                 if self.device == "gpu":
-                    cmd_run = f'docker run --runtime=nvidia --name="{model_name + "_"+str(p)}"  -p {p}:8501  '\
+                    gpu_count += 1
+                    cmd_run = f'NV_GPU='{gpu_count}' nvidia-docker run --runtime=nvidia --name="{model_name + "_"+str(p)}"  -p {p}:8501  '\
                             f'--mount type=bind,source={self.model_root + model_name}/,target=/models/{model_name} ' \
                             f'--mount type=bind,source={config_file},target=/models/batching_parameters.config ' \
                             f'-e MODEL_NAME={model_name} -t tensorflow/serving:latest-gpu --per_process_gpu_memory_fraction={frac} '  \
