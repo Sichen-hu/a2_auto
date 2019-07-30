@@ -50,7 +50,7 @@ class tf_serving_cls():
             end_time = timeit.default_timer ()
             latency = end_time-start_time
 
-            print ('Prediction class: %s, avg latency: %.2f ms'.format (prediction[0][0],latency*1000))
+            unbuffered_print('Prediction class: %s, avg latency: %.2f ms'%(prediction[0][0],latency*1000))
         except Exception as e:
             traces = traceback.format_exc()
 
