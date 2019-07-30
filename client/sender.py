@@ -31,20 +31,20 @@ class tf_serving_cls():
     def tf_serving_request(self, decision_dict,req_recorder):
         # print(decision_dict)
         config = decision_dict["config"]
-        unbuffered_print(config)
+        # unbuffered_print(config)
         model_version = config['model_ver']
         data_version = config['data_ver']
         url = random.sample(config["urls"],1)[0]
         r_time = config['time']
         batch = config["batch"]
         count = 0
+        unbuffered_print("Sending request: %s"%decision_dict["id"])
         while count <= 9:
             try:
-                unbuffered_print("Sending Requests for %s times"%count)
+                # unbuffered_print("Sending Requests for %s times"%count)
                 SERVER_URL = url
                 image_bytes = self.data_preprocess (self.image_path, data_version)
                 predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
-
                 start_time = timeit.default_timer()
                 response = requests.post (SERVER_URL, data=predict_request)
                 response.raise_for_status ()
@@ -53,7 +53,6 @@ class tf_serving_cls():
                 end_time = timeit.default_timer ()
                 latency = end_time-start_time
 
-                unbuffered_print('Prediction class: %s, avg latency: %.2f ms'%(prediction[0][0],latency*1000))
                 temp = {}
                 temp["real_latency"] = latency
                 temp["url"] = SERVER_URL
@@ -62,7 +61,7 @@ class tf_serving_cls():
                 temp["time"] = r_time
                 temp["batch"] = batch
                 req_recorder[decision_dict["id"]] = temp
-                unbuffered_print("Send Thread Done")
+                unbuffered_print('Request: %s Prediction class: %s, avg latency: %.2f ms'%(decision_dict["id"], prediction[0][0],latency*1000))
                 return
 
             except Exception as e:

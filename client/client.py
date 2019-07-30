@@ -71,7 +71,7 @@ class a2_client():
             unbuffered_print("Reading trace file Error, using default settings")
             trace_data = [2] * 3600
         trace_data[0] += 1
-        self.trace_data = trace_data[:self.comm_interval* 60]
+        self.trace_data = trace_data[:self.comm_interval* 10]
         self.total_requests_number = np.sum(self.trace_data)
 
 
@@ -141,7 +141,7 @@ class a2_client():
         while True:
             count += 1
             num_request = next(trace_iter)
-            unbuffered_print("%s Requests generated at %s"%(num_request,get_time()))
+            unbuffered_print("%s Requests generated at %s, total: %s"%(num_request,get_time(),self.total_req_number))
             reqs = self.request_generator(count,num_request)
             self.dispatch_requests(reqs)
 
@@ -161,7 +161,7 @@ class a2_client():
                 self.total_req_number = 0
                 self.req_history = {}
             else:
-                unbuffered_print("Server sleep %s Secs"%1)
+                # unbuffered_print("Server sleep %s Secs"%1)
                 time.sleep(1)
 
 
