@@ -238,7 +238,7 @@ class a2_client():
             config["model_ver"] = values["model_ver"]
             config["data_ver"] = values["data_ver"]
             config["urls"] = values["url"]
-
+            config["batch"] = values["batch"]
             prob_list.append(values["prob"])
             config_list.append(config)
 
