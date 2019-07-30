@@ -229,9 +229,11 @@ class a2_client():
         #     }
         #
         # }
+        unbuffered_print(ctrl_msg)
         config_list = []
         prob_list = []
         for model_version, values in ctrl_msg.items():
+            unbuffered_print("%s ,%s"%(model_version, type(values)))
             config = {}
             config["model_name_version"] = model_version
             config["model_ver"] = values["model_ver"]
