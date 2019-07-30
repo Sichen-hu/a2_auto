@@ -107,16 +107,15 @@ if __name__ == "__main__":
                             comm_interval = comm_interval,mobile_trace=mobile_trace,
                             res18_trace=res18_trace)
     cmds =  c_g.command_gen()
-    f = open("/tmp/clint_pid.txt","w")
+    f = open("/tmp/client_pid.txt","w")
     pids = []
     for index,cmd in enumerate(cmds):
         if index == 0:
             cmd = cmd + " >>/tmp/client.log"
 
         p = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        pids.append(str(p.pid))
+        f.write("%s\n"%str(p.pid))
 
-    f.writelines(pids)
     f.close()
     p.wait()
 

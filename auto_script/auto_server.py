@@ -187,7 +187,7 @@ class auto_server():
                     print("Error killing %s"%role)
 
         try:
-            f = open("/tmp/clint_pid.txt","r")
+            f = open("/tmp/client_pid.txt","r")
             for item in f.readlines():
                 try:
                     pid = int(item)
