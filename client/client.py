@@ -71,7 +71,7 @@ class a2_client():
             unbuffered_print("Reading trace file Error, using default settings")
             trace_data = [2] * 3600
         trace_data[0] += 1
-        self.trace_data = trace_data[:2]
+        self.trace_data = trace_data[:self.comm_interval* 60]
         self.total_requests_number = np.sum(self.trace_data)
 
 
