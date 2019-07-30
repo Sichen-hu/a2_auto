@@ -220,6 +220,7 @@ class a2_client():
 
 
     def process_controller_msg(self,ctrl_msg):
+        del ctrl_msg["type"]
         # ctrl_msg = {
         #     "mobile_dcp_0":{
         #         "url":["http://18.136.13.110:10102/v1/models/mobile_dcp_2:classify"],
