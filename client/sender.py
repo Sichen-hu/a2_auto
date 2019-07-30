@@ -4,6 +4,7 @@ import requests
 import timeit
 import time
 import random
+import traceback
 from PIL import Image
 from io import  BytesIO
 
@@ -36,20 +37,26 @@ class tf_serving_cls():
         url = random.sample(config["urls"],1)[0]
         r_time = config['time']
         batch = config["batch"]
+        try:
+            SERVER_URL = url
+            image_bytes = self.data_preprocess (self.image_path, data_version)
+            predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
 
-        SERVER_URL = url
-        image_bytes = self.data_preprocess (self.image_path, data_version)
-        predict_request = '{"signature_name":"serving_default" ,"examples":[{"image/encoded":{"b64": "%s"}}]}' % image_bytes
+            start_time = timeit.default_timer()
+            response = requests.post (SERVER_URL, data=predict_request)
+            response.raise_for_status ()
+            prediction = response.json ()['results'][0]
 
-        start_time = timeit.default_timer()
-        response = requests.post (SERVER_URL, data=predict_request)
-        response.raise_for_status ()
-        prediction = response.json ()['results'][0]
+            end_time = timeit.default_timer ()
+            latency = end_time-start_time
 
-        end_time = timeit.default_timer ()
-        latency = end_time-start_time
+            print ('Prediction class: %s, avg latency: %.2f ms'.format (prediction[0][0],latency*1000))
+        except Exception as e:
+            traces = traceback.format_exc()
 
-        print ('Prediction class: %s, avg latency: %.2f ms'.format (prediction[0][0],latency*1000))
+            with open("/tmp/client.log","a") as f:
+                f.writelines([str(traces),str(e)])
+                f.close()
 
         # latency = 0.1*10
         # unbuffered_print("    sleep %s" % latency)
